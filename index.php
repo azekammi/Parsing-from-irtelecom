@@ -7,19 +7,17 @@ set_time_limit(0);
 //< Turning off the time limit
 
 //> Necessary pages
-$pageIndexes = array("Telephones" => array("Alcatel 27",
-                                    "Apple 6",
-                                    "Blackberry 8",
-                                    "HTC 23",
-                                    "Keneksi 256",
-                                    "Meizu 354",
-                                    "Philips 353",
-                                    "Samsung 7",
-                                    "Xiaomi 95"),
-                    "Tablets" => array("Alcatel 34",
-                                    "Asus 11",
-                                    "Lenovo 106",
-                                    "Samsung 30"));
+$pageIndexes = array("Telephones" => [["Alcatel", "27"],
+                                    ["Apple", "6"],
+                                    ["Blackberry" ,"8"],
+                                    ["HTC" ,"23"],
+                                    ["Keneksi", "256"],
+                                    ["Meizu", "354"],
+                                    ["Philips", "353"],
+                                    ["Samsung", "7"],
+                                    ["Xiaomi", "95"]],
+                    "Tablets" => [["Alcatel", "34"],
+                                       ["Samsung", "30"]]);
 //< Necessary pages
 
 //> Crating base query
@@ -27,37 +25,37 @@ $sql = "INSERT INTO `products`(`product_name`, `category_id`, `image_path`, `pro
 VALUES ";
 //< Crating base query
 
+$counter=0;
 foreach ($pageIndexes as $category => $products) {
-
+        $counter++;
         for ($i = 0; $i < count($products); $i++) {
 
             //> Taking the page of the model
-            $markAndIndex = explode(" ", $products[$i]);
-            $categoryPage = file_get_html('http://irtelecom.az/catalog/index/' . $markAndIndex[1]);
+            $categoryPage = file_get_html('http://irtelecom.az/catalog/index/' . $products[$i][1]);
             //< Taking the page of the model
 
             //> Taking all the links of the Products
-            $aTags = $categoryPage->find('a[class=catprev]');
+            $divTags = $categoryPage->find('div[class=offer_inner_product]');
             //< Taking all the links of the Products
 
-            for ($j = 0; $j < count($aTags); $j++) {
+            for ($j = 0; $j < count($divTags); $j++) {
 
                 //> Taking the link of the image of the product and saving it
-                $imgSrc = $aTags[$j]->find('img')[0]->src;
+                $imgSrc = $divTags[$j]->find('img')[0]->src;
                 if (!file_exists('images/' . basename($imgSrc))) copy($imgSrc, 'images/' . basename($imgSrc));
                 //< Taking the link of the image of the product and saving it
 
                 //> Name of the Product
-                $prodName = $aTags[$j]->find('div[class=catprev_name]')[0]->innertext;
+                $prodName = $divTags[$j]->find('div[class=feat_product_box_title]')[0]->find('a')[0]->innertext;
                 //< Name of the Product
 
                 //> Price of the Product
                 $property = 'data-product_price';
-                $prodPrice = $aTags[$j]->$property;
+                $prodPrice = $divTags[$j]->$property;
                 //< Price of the Product
 
                 //> Page of the Product
-                $prodPage = file_get_html('http://irtelecom.az'.$aTags[$j]->href);
+                $prodPage = file_get_html('http://irtelecom.az'.$divTags[$j]->find('a')[0]->href);
                 //< Page of the Product
 
                 //> Color of the Product
@@ -90,8 +88,8 @@ foreach ($pageIndexes as $category => $products) {
 from categories
 where category_name='".$category."'),'".addslashes(htmlspecialchars(basename($imgSrc))) . "','" . addslashes(htmlspecialchars($prodPrice)) . "'," . "(select id
 from marks
-where mark_name='".$markAndIndex[0]."'),'".addslashes(htmlspecialchars($prodColor))."','".addslashes(htmlspecialchars($prodDescr))."','".(0.5*rand(0,10))."','".addslashes(htmlspecialchars($prodOperSys))."')";
-                if ($category!=end($pageIndexes)||$i < count($products) - 1 || $j < count($aTags) - 1) $sql .= ',';
+where mark_name='".$products[$i][0]."'),'".addslashes(htmlspecialchars($prodColor))."','".addslashes(htmlspecialchars($prodDescr))."','".(0.5*rand(0,10))."','".addslashes(htmlspecialchars($prodOperSys))."')";
+                if ($counter<count($pageIndexes)||$i < count($products) - 1 || $j < count($divTags) - 1) $sql .= ',';
                 //< Creating final query
             }
         }
@@ -100,3 +98,5 @@ where mark_name='".$markAndIndex[0]."'),'".addslashes(htmlspecialchars($prodColo
 //> Query execution
 DB::query($sql);
 //< Query execution
+
+echo "completed";
