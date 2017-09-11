@@ -1,5 +1,6 @@
 <?php
 require_once "library/simple_html_dom.php";
+require_once "classes/Model/Data.php";
 include_once "classes/db.php";
 
 //> Turning off the time limit
