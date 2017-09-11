@@ -36,47 +36,45 @@ class Data implements DataInterface {
     public static function getCategories()
     {
         return array(
-            "Telephones" => array(
-                "Alcatel 27",
-                "Apple 6",
-                "Blackberry 8",
-                "HTC 23",
-                "Keneksi 256",
-                "Meizu 354",
-                "Philips 353",
-                "Samsung 7",
-                "Xiaomi 95"
-            ),
-            "Tablets" => array(
-                "Alcatel 34",
-                "Asus 11",
-                "Lenovo 106",
-                "Samsung 30"
-            )
+            "Telephones" => [
+                ["Alcatel", "27"],
+                ["Apple", "6"],
+                ["Blackberry", "8"],
+                ["HTC", "23"],
+                ["Keneksi", "256"],
+                ["Meizu", "354"],
+                ["Philips", "353"],
+                ["Samsung", "7"],
+                ["Xiaomi", "95"]
+            ],
+            "Tablets" => [
+                ["Alcatel", "34"],
+                ["Samsung", "30"]
+            ]
         );
     }
 
 
     /**
-     * @param string $str
+     * @param array $subCategory
      * Example: Alcatel 27
-     * method will return Alcatel
+     * method will return SubCategory's label Alcatel
      * @return string
      */
-    public static function getSubcategory($str)
+    public static function getLabel($subCategory)
     {
-        return explode(" ", $str)[0];
+        return $subCategory[0];
     }
 
     /**
-     * @param string $str
+     * @param array $subCategory
      * Example: Alcatel 27
-     * method will return 27
+     * method will return SubCategory's page number 27
      * @return string
      */
-    public static function getPageNum($str)
+    public static function getPageNum($subCategory)
     {
-        return explode(" ", $str)[1];
+        return $subCategory[1];
     }
 
 }

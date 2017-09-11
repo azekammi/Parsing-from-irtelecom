@@ -31,15 +31,15 @@ interface DataInterface {
     public static function getCategories();
 
     /**
-     * @param $str string
+     * @param $subCategory array
      * @return string
      */
-    public static function getSubcategory($str);
+    public static function getLabel($subCategory);
 
     /**
-     * @param $str string
+     * @param $subCategory array
      * @return string
      */
-    public static function getPageNum($str);
+    public static function getPageNum($subCategory);
 
 }
